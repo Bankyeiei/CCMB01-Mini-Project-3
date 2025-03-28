@@ -1,5 +1,5 @@
 name: mini_project_3
-description: "A new Flutter project."
+description: "Mini Project 3 in CCMB01"
 publish_to: 'none'
 version: 0.1.0
 
@@ -9,6 +9,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  firebase_core: ^3.12.1
+  cloud_firestore: ^5.6.5
+  firebase_auth: ^5.5.1
+  dio: ^5.8.0+1
 
 dev_dependencies:
   flutter_test:
