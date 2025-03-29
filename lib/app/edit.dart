@@ -60,6 +60,13 @@ class _EditScreenState extends State<EditScreen> {
   }
 
   @override
+  void dispose() {
+    nameController.dispose();
+    profilePictureController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(automaticallyImplyLeading: !isLoading),

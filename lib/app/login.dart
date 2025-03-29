@@ -19,6 +19,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final auth = FirebaseAuth.instance;
 
   bool isLoading = false;
+  bool isRememberMe = false;
   bool isObscureText = true;
 
   void showMessage(String message) {
@@ -40,7 +41,9 @@ class _LoginScreenState extends State<LoginScreen> {
       showMessage('Login success');
       LocalStorage.box.write('email', emailController.text.trim());
       LocalStorage.box.write('uid', uid);
-      LocalStorage.box.write('isLoggedIn', true);
+      if (isRememberMe) {
+        LocalStorage.box.write('isLoggedIn', true);
+      }
       if (mounted) {
         Navigator.pushReplacement(
           context,
@@ -62,6 +65,13 @@ class _LoginScreenState extends State<LoginScreen> {
     if (LocalStorage.box.read('email') != null) {
       emailController.text = LocalStorage.box.read('email');
     }
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
   }
 
   @override
@@ -135,6 +145,19 @@ class _LoginScreenState extends State<LoginScreen> {
                           return null;
                         },
                       ),
+                      Row(
+                        children: [
+                          Checkbox(
+                            value: isRememberMe,
+                            onChanged: (value) {
+                              setState(() {
+                                isRememberMe = !isRememberMe;
+                              });
+                            },
+                          ),
+                          Text('Remember me'),
+                        ],
+                      ),
                       SizedBox(height: 32),
                       SizedBox(
                         width: double.infinity,
@@ -170,7 +193,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           );
                         },
                         child: Text(
-                          'No account? Register Now',
+                          'No account? Register now',
                           style: TextStyle(
                             decoration: TextDecoration.underline,
                           ),

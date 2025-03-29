@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../main.dart';
 import 'login.dart';
 import 'edit.dart';
+import 'ui/cat_grid_view.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -38,7 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
         }
         return Scaffold(
           appBar: AppBar(
-            title: Text('Welcome,  ${userData['name'] ?? ''}'),
+            title: Text('Welcome, ${userData['name']?.split(' ')[0] ?? ''}'),
             actions:
                 userData['name'] == null
                     ? null
@@ -87,7 +88,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                     FilledButton(
                                       onPressed: () {
                                         LocalStorage.box.remove('uid');
-                                        LocalStorage.box.write('isLoggedIn', false);
+                                        LocalStorage.box.write(
+                                          'isLoggedIn',
+                                          false,
+                                        );
                                         Navigator.pop(context);
                                         showMessage('Logout success');
                                         Navigator.push(
@@ -139,13 +143,21 @@ class _HomeScreenState extends State<HomeScreen> {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  SizedBox(height: 8),
                   CircleAvatar(
                     radius: 32,
-                    backgroundImage: NetworkImage(userData['profile_picture']),
-                    child: Icon(Icons.person),
+                    foregroundImage: NetworkImage(userData['profile_picture']),
+                    child: Icon(Icons.person, size: 32),
                   ),
                   SizedBox(height: 8),
                   Text(userData['email'], style: TextStyle(fontSize: 16)),
+                  SizedBox(height: 16),
+                  Text(
+                    'Cat API',
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 8),
+                  Expanded(child: CatGridView()),
                 ],
               );
             },
