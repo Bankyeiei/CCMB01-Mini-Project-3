@@ -19,6 +19,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final auth = FirebaseAuth.instance;
 
   bool isLoading = false;
+  bool isObscureText = true;
 
   void showMessage(String message) {
     ScaffoldMessenger.of(context)
@@ -46,7 +47,7 @@ class _LoginScreenState extends State<LoginScreen> {
         );
       }
     } catch (error) {
-      showMessage('Error : ${error.toString()}');
+      showMessage('Login fail : ${error.toString()}');
     } finally {
       setState(() {
         isLoading = false;
@@ -65,7 +66,10 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(centerTitle: true, title: Text('Cat App')),
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text('Cat App', style: TextStyle(fontWeight: FontWeight.bold)),
+      ),
       body: Stack(
         children: [
           GestureDetector(
@@ -106,9 +110,21 @@ class _LoginScreenState extends State<LoginScreen> {
                         decoration: InputDecoration(
                           labelText: 'Password',
                           prefixIcon: Icon(Icons.password),
+                          suffixIcon: IconButton(
+                            onPressed: () {
+                              setState(() {
+                                isObscureText = !isObscureText;
+                              });
+                            },
+                            icon: Icon(
+                              isObscureText
+                                  ? Icons.visibility_off_outlined
+                                  : Icons.visibility_outlined,
+                            ),
+                          ),
                           border: OutlineInputBorder(),
                         ),
-                        obscureText: true,
+                        obscureText: isObscureText,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please type password';

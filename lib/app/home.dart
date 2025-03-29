@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../main.dart';
 import 'login.dart';
+import 'edit.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -29,21 +30,44 @@ class _HomeScreenState extends State<HomeScreen> {
     return FutureBuilder(
       future: getUser(),
       builder: (context, snapshot) {
-        String title = '';
+        Map<String, dynamic> userData = {};
         if (snapshot.connectionState == ConnectionState.done &&
             snapshot.hasData &&
             !snapshot.hasError) {
-          final data = snapshot.data!.data() as Map<String, dynamic>;
-          title = 'Welcome, ${data['name'].split(' ')[0]}';
+          userData = snapshot.data!.data() as Map<String, dynamic>;
         }
         return Scaffold(
           appBar: AppBar(
-            title: Text(title),
+            title: Text('Welcome,  ${userData['name'] ?? ''}'),
             actions:
-                title.isEmpty
+                userData['name'] == null
                     ? null
                     : [
-                      IconButton(onPressed: () {}, icon: Icon(Icons.edit)),
+                      IconButton(
+                        tooltip: 'Edit',
+                        onPressed: () async {
+                          bool hasEdit =
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder:
+                                      (context) => EditScreen(
+                                        documentReference: users.doc(
+                                          LocalStorage.box.read('uid'),
+                                        ),
+                                        name: userData['name'],
+                                        profilePicture:
+                                            userData['profile_picture'],
+                                      ),
+                                ),
+                              ) ??
+                              false;
+                          if (hasEdit) {
+                            setState(() {});
+                          }
+                        },
+                        icon: Icon(Icons.edit),
+                      ),
                       SizedBox(width: 4),
                       IconButton(
                         tooltip: 'Logout',
@@ -111,8 +135,22 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 );
               }
-              final userData = snapshot.data!.data() as Map<String, dynamic>;
-              return Column(children: [Text(userData['email'])]);
+              return Column(
+                children: [
+                  Row(
+                    children: [
+                      CircleAvatar(
+                        backgroundImage: NetworkImage(
+                          userData['profile_picture'],
+                        ),
+                        child: Icon(Icons.person),
+                      ),
+                      SizedBox(width: 10),
+                      Text(userData['email']),
+                    ],
+                  ),
+                ],
+              );
             },
           ),
         );

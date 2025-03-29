@@ -22,6 +22,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final auth = FirebaseAuth.instance;
 
   bool isLoading = false;
+  List<bool> isObscureText = [true, true];
 
   void showMessage(String message) {
     ScaffoldMessenger.of(context)
@@ -126,6 +127,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       TextFormField(
                         controller: profilePictureController,
                         keyboardType: TextInputType.url,
+                        maxLines: 4,
                         decoration: InputDecoration(
                           labelText: 'URL Profile Picture',
                           prefixIcon: Icon(Icons.image_outlined),
@@ -144,9 +146,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         decoration: InputDecoration(
                           labelText: 'Password',
                           prefixIcon: Icon(Icons.password),
+                          suffixIcon: IconButton(
+                            onPressed: () {
+                              setState(() {
+                                isObscureText[0] = !isObscureText[0];
+                              });
+                            },
+                            icon: Icon(
+                              isObscureText[0]
+                                  ? Icons.visibility_off_outlined
+                                  : Icons.visibility_outlined,
+                            ),
+                          ),
                           border: OutlineInputBorder(),
                         ),
-                        obscureText: true,
+                        obscureText: isObscureText[0],
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please type password';
@@ -162,9 +176,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         decoration: InputDecoration(
                           labelText: 'Re-Password',
                           prefixIcon: Icon(Icons.password),
+                          suffixIcon: IconButton(
+                            onPressed: () {
+                              setState(() {
+                                isObscureText[1] = !isObscureText[1];
+                              });
+                            },
+                            icon: Icon(
+                              isObscureText[1]
+                                  ? Icons.visibility_off_outlined
+                                  : Icons.visibility_outlined,
+                            ),
+                          ),
                           border: OutlineInputBorder(),
                         ),
-                        obscureText: true,
+                        obscureText: isObscureText[1],
                         validator: (value) {
                           if (passwordController.text.isEmpty) {
                             return null;
