@@ -1,3 +1,3 @@
 # mini_project_3
 
-A new Flutter project.
+Mini Project 3 in CCMB01
