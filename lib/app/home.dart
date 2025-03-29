@@ -87,6 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     FilledButton(
                                       onPressed: () {
                                         LocalStorage.box.remove('uid');
+                                        LocalStorage.box.write('isLoggedIn', false);
                                         Navigator.pop(context);
                                         showMessage('Logout success');
                                         Navigator.push(
@@ -136,19 +137,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               }
               return Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Row(
-                    children: [
-                      CircleAvatar(
-                        backgroundImage: NetworkImage(
-                          userData['profile_picture'],
-                        ),
-                        child: Icon(Icons.person),
-                      ),
-                      SizedBox(width: 10),
-                      Text(userData['email']),
-                    ],
+                  CircleAvatar(
+                    radius: 32,
+                    backgroundImage: NetworkImage(userData['profile_picture']),
+                    child: Icon(Icons.person),
                   ),
+                  SizedBox(height: 8),
+                  Text(userData['email'], style: TextStyle(fontSize: 16)),
                 ],
               );
             },

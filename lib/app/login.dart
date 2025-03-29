@@ -40,6 +40,7 @@ class _LoginScreenState extends State<LoginScreen> {
       showMessage('Login success');
       LocalStorage.box.write('email', emailController.text.trim());
       LocalStorage.box.write('uid', uid);
+      LocalStorage.box.write('isLoggedIn', true);
       if (mounted) {
         Navigator.pushReplacement(
           context,

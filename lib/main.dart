@@ -9,6 +9,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await GetStorage.init();
+  await LocalStorage.box.writeIfNull('isLoggedIn', false);
   runApp(const MainApp());
 }
 
@@ -24,7 +25,7 @@ class MainApp extends StatelessWidget {
           style: TextButton.styleFrom(foregroundColor: Colors.black),
         ),
       ),
-      home: LocalStorage.box.read('uid') == null ? LoginScreen() : HomeScreen(),
+      home: LocalStorage.box.read('isLoggedIn') ? HomeScreen() : LoginScreen(),
     );
   }
 }
