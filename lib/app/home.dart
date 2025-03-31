@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -6,35 +8,28 @@ import 'login.dart';
 import 'edit.dart';
 import 'ui/cat_grid_view.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class HomeScreen extends StatelessWidget {
+  HomeScreen({super.key});
 
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
   final users = FirebaseFirestore.instance.collection('users');
 
-  void showMessage(String message) {
+  void showMessage(String message, BuildContext context) {
     ScaffoldMessenger.of(context)
       ..removeCurrentSnackBar()
       ..showSnackBar(SnackBar(content: Text(message)));
   }
 
-  Future<DocumentSnapshot> getUser() {
-    return users.doc(LocalStorage.box.read('uid')).get();
+  Stream<DocumentSnapshot> getUser() {
+    return users.doc(LocalStorage.box.read('uid')).snapshots();
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: getUser(),
+    return StreamBuilder(
+      stream: getUser(),
       builder: (context, snapshot) {
         Map<String, dynamic> userData = {};
-        if (snapshot.connectionState == ConnectionState.done &&
-            snapshot.hasData &&
-            !snapshot.hasError) {
+        if (snapshot.hasData && !snapshot.hasError) {
           userData = snapshot.data!.data() as Map<String, dynamic>;
         }
         return Scaffold(
@@ -46,26 +41,20 @@ class _HomeScreenState extends State<HomeScreen> {
                     : [
                       IconButton(
                         tooltip: 'Edit',
-                        onPressed: () async {
-                          bool hasEdit =
-                              await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder:
-                                      (context) => EditScreen(
-                                        documentReference: users.doc(
-                                          LocalStorage.box.read('uid'),
-                                        ),
-                                        name: userData['name'],
-                                        profilePicture:
-                                            userData['profile_picture'],
-                                      ),
-                                ),
-                              ) ??
-                              false;
-                          if (hasEdit) {
-                            setState(() {});
-                          }
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder:
+                                  (context) => EditScreen(
+                                    documentReference: users.doc(
+                                      LocalStorage.box.read('uid'),
+                                    ),
+                                    name: userData['name'],
+                                    profilePicture: userData['profile_picture'],
+                                  ),
+                            ),
+                          );
                         },
                         icon: Icon(Icons.edit),
                       ),
@@ -93,8 +82,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                           false,
                                         );
                                         Navigator.pop(context);
-                                        showMessage('Logout success');
-                                        Navigator.push(
+                                        showMessage('Logout success', context);
+                                        Navigator.pushReplacement(
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) => LoginScreen(),
@@ -146,11 +135,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   SizedBox(height: 8),
                   CircleAvatar(
                     radius: 32,
-                    foregroundImage: NetworkImage(userData['profile_picture']),
+                    foregroundImage: NetworkImage(
+                      userData['profile_picture'] ?? '',
+                    ),
                     child: Icon(Icons.person, size: 32),
                   ),
                   SizedBox(height: 8),
-                  Text(userData['email'], style: TextStyle(fontSize: 16)),
+                  Text(userData['email'] ?? '', style: TextStyle(fontSize: 16)),
                   SizedBox(height: 16),
                   Text(
                     'Cat API',

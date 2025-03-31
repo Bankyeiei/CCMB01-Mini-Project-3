@@ -35,9 +35,9 @@ class _CatGridViewState extends State<CatGridView> {
     super.initState();
     loadCatImage();
     scrollController.addListener(() {
-      if (scrollController.position.pixels >=
-              scrollController.position.maxScrollExtent + 80 &&
-          !isLoading) {
+      if (!isLoading &&
+          scrollController.position.pixels >=
+              scrollController.position.maxScrollExtent + 80) {
         isLoading = true;
         loadCatImage();
       }
