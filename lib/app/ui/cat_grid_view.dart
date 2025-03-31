@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
@@ -69,14 +70,28 @@ class _CatGridViewState extends State<CatGridView> {
             borderRadius: BorderRadius.circular(16),
             color: const Color.fromARGB(127, 158, 158, 158),
           ),
-          child: Image.network(
-            catImageUrl[index],
+          child: CachedNetworkImage(
+            imageUrl: catImageUrl[index],
             fit: BoxFit.cover,
-            errorBuilder:
-                (context, error, stackTrace) => Center(
+            placeholder:
+                (context, url) => CircularProgressIndicator(
+                  padding: EdgeInsets.all(64),
+                  strokeWidth: 8,
+                ),
+            errorWidget:
+                (context, url, error) => Center(
                   child: Icon(Icons.pets, color: Colors.red, size: 48),
                 ),
           ),
+
+          // Image.network(
+          //   catImageUrl[index],
+          //   fit: BoxFit.cover,
+          //   errorBuilder:
+          //       (context, error, stackTrace) => Center(
+          //         child: Icon(Icons.pets, color: Colors.red, size: 48),
+          //       ),
+          // ),
         );
       },
     );
